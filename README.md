@@ -1,3 +1,3 @@
-# Andrei-DWECL
+# Andrei-DWESE
 Eduard Andrei Abril Badea.<br>
-Donde subir las practicas de clientes.
+Donde subir las practicas de servidores.
