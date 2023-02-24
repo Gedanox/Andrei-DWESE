@@ -133,7 +133,7 @@
                         <!-- Pagination -->
                         <nav aria-label="navigation" class="navigation">
                             <p>
-                                {{ $items->onEachSide(2)->links() }}
+                                @yield('links')
                             </p>
                         </nav>
                     </div>

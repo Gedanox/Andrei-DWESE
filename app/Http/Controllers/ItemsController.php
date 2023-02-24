@@ -9,12 +9,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Service\Provider;
 use Carbon\Carbon;
 
-
-class AjaxYateController extends Controller {
+class ItemsController extends Controller
+{
+    
+    
 
     const ORDER_BY = 'name';
     const ORDER_TYPE = 'asc';
-    const ITEMS_PER_PAGE = 10;
+    const ITEMS_PER_PAGE = 4;
 
     private function getOrder($orderArray, $order, $default) {
         $value = array_search($order, $orderArray);
@@ -56,7 +58,7 @@ class AjaxYateController extends Controller {
                 if($oBy == $indexBy && $oType == $indexType) {
                     $urls[$indexBy][$indexType] = url()->full() . '#';
                 } else {
-                    $urls[$indexBy][$indexType] = route('index',[
+                    $urls[$indexBy][$indexType] = route('index.index',[
                                                         'orderby' => $by,
                                                         'ordertype' => $type,
                                                         'q' => $q]);
@@ -88,8 +90,7 @@ class AjaxYateController extends Controller {
         if($q != '') {
             $item = $item->where('name', 'like', '%' . $q . '%')
                             ->orWhere('description', 'like', '%' . $q . '%')
-                            ->orWhere('price', 'like', '%' . $q . '%')
-                            ->orWhere('category', 'like', '%' . $q . '%');
+                            ->orWhere('price', 'like', '%' . $q . '%');
         }
 
         //agregando el orden a la consulta
@@ -106,21 +107,19 @@ class AjaxYateController extends Controller {
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    function index(Request $request) {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
         $q = $request->input('q', '');
         
         $orderby = $this->getOrderBy($request->input('orderby'));
         $ordertype = $this->getOrderType($request->input('ordertype'));
         
-        $route = route('index',[
+        $route = route('index.index',[
                                     'orderby' => $request->input('orderby'),
                                     'ordertype' => $request->input('ordertype')]);
                                     
@@ -136,37 +135,108 @@ class AjaxYateController extends Controller {
         if($q != '') {
             $item = $item->where('name', 'like', '%' . $q . '%')
                             ->orWhere('description', 'like', '%' . $q . '%')
-                            ->orWhere('price', 'like', '%' . $q . '%')
-                            ->orWhere('category', 'like', '%' . $q . '%');
+                            ->orWhere('price', 'like', '%' . $q . '%');
         }
                 
         $items = $item->paginate(self::ITEMS_PER_PAGE)->withQueryString();
         //dd($items);
-        return view('index', [ 'order'     => $this->getOrderUrls($orderby, $ordertype, $q),
-                                    'orderby'   => $request->input('orderby'),
-                                    'ordertype' => $request->input('ordertype'),
-                                    'q'         => $q,
-                                    'items'     => $items]);
+        return view('items.index', [  'order'     => $this->getOrderUrls($orderby, $ordertype, $q),
+                                'orderby'   => $request->input('orderby'),
+                                'ordertype' => $request->input('ordertype'),
+                                'q'         => $q,
+                                'items'     => $items]);
     }
-    
-    public function show(Item $item)
-    {
-        return view('show', ['item' => $item]);
-    }
-    
-    function upload(Request $request) 
-    {
-    	if($request->hasFile('file') && $request->file('file')->isValid())
-    	{
-			 $file = $request->file('file');
-			 
-			 $target = 'storage/';
-			 $date = (string)Carbon::parse(Carbon::now())->format('YmdHis');
-			 $name = $date . $file->getClientOriginalName();
-			 
 
-			 $file->move($target, $name);
-			 
-		}
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('items.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+     
+    public function store(Request $request)
+    {
+        $items = new Items();
+        $items->iduser = 1;
+        $items->idcategory = $request->category;
+        $items->name = $request->name;
+        
+        if($request->hasFile('photo') && $request->file('photo')->isValid())
+        	{
+        		 $file = $request->file('photo');
+        		 
+        		 $target = 'storage/';
+        		 $date = (string)Carbon::parse(Carbon::now())->format('YmdHis');
+        		 $name = $date . $file->getClientOriginalName();
+        		 
+        
+        		 $file->move($target, $name);
+        		 
+        	}
+		
+        $items->photo = $target.$name;
+        $items->description = $request->description;
+        $items->price = $request->price;
+        //dd($items);
+        
+        $items->save();
+        
+        return redirect('index');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $items = Items::find($id);
+        return view('items.show', ['items' => $items]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
     }
 }

@@ -16,9 +16,9 @@
     <nav class="amado-nav">
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="shop.html">Shop</a></li>
-            <li class="active"><a href="product-details.html">Product</a></li>
-            <li><a href="cart.html">Cart</a></li>
+            <li class="active"><a href="#">Shop</a></li>
+            <li><a href="#">Product</a></li>
+            <li><a href="{{ url('index/create') }}">Create</a></li>
             <li><a href="checkout.html">Checkout</a></li>
         </ul>
     </nav>
@@ -40,11 +40,12 @@
         <table class="table table-striped table-responsive" id="yachtTable">
             
             <tbody>
+                @foreach($items as $item)
                     <div class="col-12 col-sm-6 col-md-12 col-xl-6">
                             <div class="single-product-wrapper">
                                 <!-- Product Image -->
-                                <div class="forceimage">
-                                    <img src="{{ url($item->photo) }}" class="forceimage" alt="">
+                                <div class="">
+                                    <img src="{{ url($item->photo) }}" class="" alt="">
                                 </div>
     
                                 <!-- Product Description -->
@@ -53,7 +54,7 @@
                                     <div class="product-meta-data">
                                         <div class="line"></div>
                                         <p class="product-price">{{ $item->price }}€</p>
-                                        <a href="product-details.html">
+                                        <a href="{{ url('index/' . $item->id) }}">
                                             <h6>{{ $item->name }}</h6>
                                         </a>
                                     </div>
@@ -66,6 +67,7 @@
                                 </div>
                             </div>
                         </div>
+                @endforeach
             </tbody>
         </table>
         <div id="row">
@@ -74,37 +76,6 @@
             </ul>
         </div>
     </div>
-@endsection
-
-@section('test1')
-    <!-- Single Product Area -->
-                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
-                        <div class="single-product-wrapper">
-                            <!-- Product Image -->
-                            <div class="product-img">
-                                <img src="{{ url('assets/img/product1.jpg') }}" alt="">
-                                <!-- Hover Thumb -->
-                            </div>
-
-                            <!-- Product Description -->
-                            <div class="product-description d-flex align-items-center justify-content-between">
-                                <!-- Product Meta Data -->
-                                <div class="product-meta-data">
-                                    <div class="line"></div>
-                                    <p class="product-price">$180</p>
-                                    <a href="product-details.html">
-                                        <h6>Modern Chair</h6>
-                                    </a>
-                                </div>
-                                <!-- Ratings & Cart -->
-                                <div class="ratings-cart text-right">
-                                    <div class="cart">
-                                        <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="{{ url('assets/img/cart.png') }}" alt=""></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 @endsection
 
 @section('category')
@@ -166,17 +137,18 @@
     <!-- Sorting -->
     <div class="product-sorting d-flex">
         <div class="sort-by-date d-flex align-items-center mr-15">
-            <p>Sort by</p>&nbsp;&nbsp;
-                    <a href="{{ $order['price']['asc'] }}">Price Asc</a> &nbsp;&nbsp;
-                    <a href="{{ $order['price']['desc'] }}">Price Desc</a> &nbsp;&nbsp;
-                    <a href="{{ $order['name']['asc'] }}">Name Asc</a>&nbsp;&nbsp;
-                    <a href="{{ $order['name']['desc'] }}">Name Desc</a>&nbsp;&nbsp;
-                    <a href="{{ $order['created_at']['desc'] }}">New</a>&nbsp;&nbsp;
-                    <a href="{{ $order['created_at']['asc'] }}">Old</a>&nbsp;&nbsp;
+            <p>Sort by&nbsp;&nbsp;
+                <a href="{{ $order['price']['asc'] }}">Price Asc</a> &nbsp;&nbsp;
+                <a href="{{ $order['price']['desc'] }}">Price Desc</a> &nbsp;&nbsp;
+                <a href="{{ $order['name']['asc'] }}">Name Asc</a>&nbsp;&nbsp;
+                <a href="{{ $order['name']['desc'] }}">Name Desc</a>&nbsp;&nbsp;
+                <a href="{{ $order['created_at']['desc'] }}">New</a>&nbsp;&nbsp;
+                <a href="{{ $order['created_at']['asc'] }}">Old</a>&nbsp;&nbsp;
+            </p>
         </div>
     </div>
 @endsection
 
-@section('category4')
-
+@section('links')
+    {{ $items->onEachSide(2)->links() }}
 @endsection

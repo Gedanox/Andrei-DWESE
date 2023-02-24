@@ -12,16 +12,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-//no ajax SPA
-Route::get('/', [App\Http\Controllers\AjaxYateController::class, 'index'])->name('index');
-// Ajax
-Route::resource('index', App\Http\Controllers\AjaxYateController::class);
-Route::get('item', [App\Http\Controllers\AjaxYateController::class, 'items'])->name('yate.items');
 
-Route::post('upload', [App\Http\Controllers\AjaxYateController::class, 'upload'])->name('upload');     //sube el archivo
+//php artisan route:list --except-vendor
 
+Route::get('/', function () {
+    return redirect('index');
+});
 
-
-
-Auth::routes();//Forma de eliminar las rutas que nos sobran
-//Route::get('/hom', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::resource('index', App\Http\Controllers\ItemsController::class);

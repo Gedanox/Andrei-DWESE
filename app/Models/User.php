@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
+//use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail 
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'type'
     ];
 
     /**
@@ -41,4 +43,48 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    function deleteUser() {
+        $result = false;
+        try {
+            $this->delete();
+            $result = true;
+        } catch(\Exception $e) {
+        }
+        return $result;
+    }
+
+    function isAdmin() {
+        return $this->type == 'admin';
+    }
+
+    function isAdvanced() {
+        return $this->type == 'advanced' || $this->type == 'admin';
+    }
+
+    function isUser() {
+        return $this->type == 'user' || $this->type == 'advanced' || $this->type == 'admin';
+    }
+
+    function storeUser() {
+        try {
+            $this->save();
+            return true;
+        } catch(\Exception $e) {
+            return false;
+        }
+    }
+
+    function updateUser() {
+        try {
+            $this->update();
+            return true;
+        } catch(\Exception $e) {
+            return false;
+        }
+    }
+    
+    function yates() {
+        return $this->hasMany('App\Models\Yate', 'iduser');
+    }
 }
