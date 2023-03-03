@@ -150,5 +150,32 @@
 @endsection
 
 @section('links')
-    {{ $items->onEachSide(2)->links() }}
+    @foreach($items->onEachSide(2)->links() as $link)
+        <div class="col-12 col-sm-6 col-md-12 col-xl-6">
+                <div class="single-product-wrapper">
+                    <!-- Product Image -->
+                    <div class="">
+                        <img src="{{ url($item->photo) }}" class="" alt="">
+                    </div>
+    
+                    <!-- Product Description -->
+                    <div class="product-description d-flex align-items-center justify-content-between">
+                        <!-- Product Meta Data -->
+                        <div class="product-meta-data">
+                            <div class="line"></div>
+                            <p class="product-price">{{ $item->price }}€</p>
+                            <a href="{{ url('index/' . $item->id) }}">
+                                <h6>{{ $item->name }}</h6>
+                            </a>
+                        </div>
+                        <!-- Ratings & Cart -->
+                        <div class="ratings-cart text-right">
+                            <div class="cart">
+                                <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="{{ url('assets/img/cart.png') }}" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    @endforeach
 @endsection

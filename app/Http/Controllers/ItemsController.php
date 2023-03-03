@@ -135,7 +135,8 @@ class ItemsController extends Controller
         if($q != '') {
             $item = $item->where('name', 'like', '%' . $q . '%')
                             ->orWhere('description', 'like', '%' . $q . '%')
-                            ->orWhere('price', 'like', '%' . $q . '%');
+                            ->orWhere('price', 'like', '%' . $q . '%')
+                            ->orWhere('category', 'like', '%' . $q . '%');
         }
                 
         $items = $item->paginate(self::ITEMS_PER_PAGE)->withQueryString();
