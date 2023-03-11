@@ -7,7 +7,6 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Service\Provider;
-use App\Models\Item;
 
 
 class AjaxShopController extends Controller {
@@ -55,7 +54,7 @@ class AjaxShopController extends Controller {
                 if($oBy == $indexBy && $oType == $indexType) {
                     $urls[$indexBy][$indexType] = url()->full() . '#';
                 } else {
-                    $urls[$indexBy][$indexType] = route('shop.fetchdata',[
+                    $urls[$indexBy][$indexType] = route('index.index',[
                                                         'orderby' => $by,
                                                         'ordertype' => $type,
                                                         'q' => $q]);
@@ -76,13 +75,11 @@ class AjaxShopController extends Controller {
         $orderby = $this->getOrderBy($request->input('orderby'));
         $ordertype = $this->getOrderType($request->input('ordertype'));
         
-        $route = route('shop.fetchdata',[
-                            'orderby' => $request->input('orderby'),
-                            'ordertype' => $request->input('ordertype')]);
+        
         
         //construcción de la consulta
         $item = DB::table('items')
-                    ->select('*');       
+                    ->select('*');
 
         //agregando condición a la consulta, si la hay
         if($q != '') {
@@ -100,58 +97,14 @@ class AjaxShopController extends Controller {
         //ejecutar la consulta, usando la paginación
         $items = $item->paginate(self::ITEMS_PER_PAGE)->withQueryString();
         
-        //dd(url('item'));
+        //dd($items);
         return response()->json(['items'    => $items,
                                  'csrf'     => csrf_token(),
-                                 'user'     => Auth::user(),
-                                 'url'      => url('item')],
+                                 'user'     => Auth::user()],
                                  200);
     }
     
     function index(Request $request) {
         return view('index');
-    }
-    
-    function show(Request $request){
-        return view('show', ['item' => $item]);
-    }
-    
-    function fetchData2(Request $request) {
-        //consulta, ordenación y tipo de ordenación
-        $q = $request->input('q', '');
-        $orderby = $request->input('orderby', 'name');
-        $ordertype = $request->input('ordertype', 'asc');
-        
-        $orderby = $this->getOrderBy($request->input('orderby'));
-        $ordertype = $this->getOrderType($request->input('ordertype'));
-        
-        $route = route('shop.fetchdata',[
-                            'orderby' => $request->input('orderby'),
-                            'ordertype' => $request->input('ordertype')]);
-        
-        //construcción de la consulta
-        $item = DB::table('items')
-                    ->select('*');       
-
-        //agregando condición a la consulta, si la hay
-        if($q != '') {
-            $item = $item->where('id', 'like', '' . $q . '');
-        }
-
-        //agregando el orden a la consulta
-        $item = $item->orderBy($orderby, $ordertype);
-        if($orderby != self::ORDER_BY) {
-            $item = $item->orderBy(self::ORDER_BY, self::ORDER_TYPE);
-        }
-
-        //ejecutar la consulta, usando la paginación
-        $items = $item->paginate(self::ITEMS_PER_PAGE)->withQueryString();
-        
-        //dd(url('item'));
-        return response()->json(['items'    => $items,
-                                 'csrf'     => csrf_token(),
-                                 'user'     => Auth::user(),
-                                 'url'      => url('item')],
-                                 200);
     }
 }

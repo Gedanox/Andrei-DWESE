@@ -20456,3 +20456,14 @@ iframe.yt-video.loaded {
   left: 22%;
   top: 10%;
 }
+
+.fakebtn{
+      letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
+
+
+.nomostrar{
+  display:none;
+}
